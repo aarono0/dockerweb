@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>IMAGE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href={{ url_for('static', filename='css/bootstrap.min.css') }} rel="stylesheet" media="screen">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="http://labfile.oss.aliyuncs.com/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="http://labfile.oss.aliyuncs.com/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+    <h2 class="page-header">ENGINE</h2> 
+      <ul class="nav nav-tabs">
+      <li class="active"><a>ENGINE</a></li>
+      <li><a href={{url_for('images')}}>IMAGE</a></li>
+      <li><a href={{url_for('containers')}} >CONTAINER</a></li>
+      </ul>
+      <div style="padding-top:20px;">
+        {% for i in host_info%}
+            <p>{{i}}:{{host_info[i]}}</p>
+        {% endfor %}
+
+        {% for i in docker_info %}
+            <p>{{i}}:{{docker_info[i]}}</p>
+        {% endfor %}
+
+
+        {% for i in storage_usage %}
+            <p>{{i}}:{{storage_usage[i]}}</p>
+        {% endfor %}
+    </div>
+    </div>
+    <script src={{ url_for('static', filename='js/jquery-2.0.3.js') }}></script>
+    <script src={{ url_for('static', filename='js/bootstrap.js') }}></script>
+  </body>
+</html>

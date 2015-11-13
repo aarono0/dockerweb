@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>IMAGE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href={{ url_for('static', filename='css/bootstrap.min.css') }} rel="stylesheet" media="screen">
+  </head>
+  <body>
+    <div class="container">
+    <h2 class="page-header">IMAGE</h2> 
+      <ul class="nav nav-tabs">
+      <li><a href={{url_for('index')}}>ENGINE</a></li>
+      <li class="active"><a>IMAGE</a></li>
+      <li><a href={{url_for('containers')}} >CONTAINER</a></li>
+      </ul>
+    <div style="padding-top:20px;">
+    <table class="table table-striped table-bordered">
+      <thead>  
+        <tr>
+          <th>REPOSITORY</th>
+          <th>TAG</th>
+          <th>ID</th>
+          <th>CREATED</th>
+          <th>VIRTUALSIZE</th>
+          <th>OPTION</th>
+        </tr>  
+      </thead>
+      <tbody>
+        {% for i in images_list %}
+        <tr>
+            {% for raw in i %}
+            <td>{{raw}}</td>
+            {% endfor %}
+            <td>
+            <form action="{{url_for('images')}}" method='POST'>
+            <input type='hidden' name='repotag' value={{i.0}}:{{i.1}} >
+            <input type='button' class="btn btn-success btn-xs" data-toggle="modal" data-target="#myModal{{loop.index}}" value='BOOT'>
+            <!--input type='submit' class="btn btn-success btn-xs" name='action' value='BOOT' /-->
+            <!--input type='submit' class="btn btn-info btn-xs" name='action' value='SAVE' /-->
+            <!--input type='submit' class="btn btn-warning btn-xs" name='action' value='DELETE' /-->
+            <!--input type='button' class="btn btn-warning btn-xs" data-toggle="modal" data-target="#remove{{loop.index}}" value='DELETE'-->
+            <button type='button' class="btn btn-danger btn-xs" data-toggle="modal" data-target="#remove{{loop.index}}">
+                <span class="glyphicon glyphicon-trash"></span>
+            </button>
+            </form>
+            </td>
+        </tr>
+        
+        <div class="modal fade" id="myModal{{loop.index}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+           <div class="modal-dialog">
+              <div class="modal-content">
+                 <div class="modal-header">
+                    <button type="button" class="close" 
+                       data-dismiss="modal" aria-hidden="true">
+                          &times;
+                    </button>
+                    <h3 class="modal-title" id="myModalLabel">
+                       Create Container
+                    </h3>
+                 </div>
+                 <div class="modal-body">
+                    <h3>{{i.0}}:{{i.1}}</h3>
+                    <form role="form" action="{{url_for('images')}}" method="post">
+                        <input type='hidden' name='repotag' value={{i.0}}:{{i.1}} >
+                        <label>Hostname</label>
+                        <input type="text" class="form-control" name="name" />
+                        <label for="command">Command</label>
+                        <textarea class="form-control" style="resize: none;" rows="3" name="command"></textarea>
+                            
+                        <div class="modal-footer">
+                        <input type="button" class="btn btn-default" data-dismiss="modal" value='close'/>
+                        <input type='submit' class="btn btn-primary" name='boot' value='commit' />
+                        </div>
+                    </form> <!-- /.form -->
+                </div><!-- /.modal-body -->
+              </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+        <div class="modal fade" id="remove{{loop.index}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h3 class="modal-title" id="myModalLabel2">
+                       REMOVE IMAGE
+                    </h3>
+                    </div>
+                    <div class="modal-body">
+                        <form role="form" action="{{url_for('images')}}" method="post">
+                            <div class="text" style=" text-align:center;">
+                            <h4>Are you sure remove the {{i.0}}:{{i.1}}</h4>
+                            </br>
+                            <input type='hidden' name='repotag' value={{i.0}}:{{i.1}} >
+                            <input type="button" class="btn btn-default" data-dismiss="modal" value='close'/>
+                            <input type='submit' class="btn btn-primary" name='action' value='delete' />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.modal.remove -->
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
+    <script src={{ url_for('static', filename='js/jquery-2.0.3.js') }}></script>
+    <script src={{ url_for('static', filename='js/bootstrap.js') }}></script>
+</div>
+</div>
+</body>
+</html>

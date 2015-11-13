@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CONTAINER</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href={{ url_for('static', filename='css/bootstrap.min.css') }} rel="stylesheet" media="screen">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="http://labfile.oss.aliyuncs.com/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="http://labfile.oss.aliyuncs.com/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+    <h2 class="page-header">CONTAINER</h2>
+      <ul class="nav nav-tabs">
+      <li><a href={{url_for('index')}}>ENGINE</a></li>
+      <li><a href={{url_for('images')}}>IMAGE</a></li>
+      <li class="active"><a>CONTAINER</a></li>
+      </ul>
+      
+    <div style="padding-top:20px;">
+    <table class="table table-striped table-bordered">
+      <thead>  
+        <tr>  
+        <th>NAME</th>
+        <th>IMAGE</th>
+        <th>ID</th>
+        <th>CREATED</th>
+        <th>STATUS</th>
+        <th>OPTION</th>
+        </tr>  
+      </thead>
+      <tbody>
+        {% for i in containers_list %}
+        <tr>
+            {% for raw in i %}
+                {% if 'Up' in raw and 'Paused' not in raw %}
+                    <td><span class="glyphicon glyphicon-circle-arrow-up" style="color:#5CB85C;font-size:large"></span></td>
+                {% elif 'Exited' in raw%}
+                    <td><span class="glyphicon glyphicon-stop" style="color:#D43F3A;font-size:large"></span></td>
+                {% elif 'Paused' in raw%}   
+                    <td><span class="glyphicon glyphicon-pause" style="color:orange;font-size:large"></span></td>
+                {% elif 'Created' in raw%}
+                    <td><span class="glyphicon glyphicon-signal" style="color:orange;font-size:large"></span></td>
+                {% else %}
+                    <td>{{raw}}</td>
+                {% endif %}
+            {% endfor %}
+            <td>
+                <form action="{{url_for('containers')}}" method='POST'>
+                <input type='hidden' name='id' value={{i.2}} >
+                <!--input type='submit' class="btn btn-info btn-xs" name='action' value='INFO' /-->
+                <button type='button' class="btn btn-info btn-xs" data-toggle="modal" data-target="#myModal{{loop.index}}">INFO</button>
+                <div class="btn-group">
+                  <button type="button" class="btn dropdown-toggle btn-xs" data-toggle="dropdown">
+                    <!--span class="caret"></span-->
+                    <!--span class="sr-only">Toggle Dropdown</span-->
+                    <span class="glyphicon glyphicon-wrench"></span>
+                  </button>
+                  
+                  <ul class="dropdown-menu" style="min-width:120px">
+                    {% for action in actionlist %}
+                    <!--li><input type='submit' class="btn btn-default btn-sm btn-block" style="border-style:hidden" name='action' value={{action}} /></li-->
+                    <button type='button' class="btn btn-default btn-sm btn-block" style="border-style:hidden" data-toggle="modal" data-target="#action{{loop.index}}">{{action}}</button>
+                    <li class="divider"></li>
+                    <!--li><input type='submit' class="btn btn-default btn-sm btn-block" style="border-style:hidden" name='action' value='REBOOT' /></li>
+                    <li class="divider"></li>
+                    <li><input type='submit' class="btn btn-default btn-sm btn-block" style="border-style:hidden" name='action' value='PAUSE' /></li>
+                    <li class="divider"></li>
+                    <li><input type='submit' class="btn btn-default btn-sm btn-block" style="border-style:hidden" name='action' value='RECOVER' /></li>
+                    <li class="divider"></li>
+                    <li><input type='submit' class="btn btn-default btn-sm btn-block" style="border-style:hidden" name='action' value='KILL' /></li>
+                    <li class="divider"></li>
+                    <li><input type='submit' class="btn btn-default btn-sm btn-block" style="border-style:hidden" name='action' value='DELETE' /></li-->
+                    {% endfor %}
+                  </ul>
+                </div>
+                {% for action in actionlist %}
+                <div class="modal fade" id="action{{loop.index}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <h4 class="modal-title" id="myModalLabel2">
+                                   {{action}} CONTAINER
+                                </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form role="form" action="{{url_for('containers')}}" method="post">
+                                        <div class="text" style=" text-align:center;">
+                                        <h4>Are you sure {{action}} the {{i.2}}</h4>
+                                        </br>
+                                        <input type='hidden' name='id' value={{i.2}} >
+                                        <input type="button" class="btn btn-default" data-dismiss="modal" value='CLOSE'/>
+                                        <input type='submit' class="btn btn-warning" name='action' value='{{action}}' />
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- /.modal.remove -->
+                {% endfor %}
+                </form>
+            </td>
+        </tr>
+        <div class="modal fade" id="myModal{{loop.index}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+           <div class="modal-dialog">
+              <div class="modal-content">
+                 <div class="modal-header">
+                    <button type="button" class="close" 
+                       data-dismiss="modal" aria-hidden="true">
+                          &times;
+                    </button>
+                    <h3 class="modal-title" id="myModalLabel">
+                       Detail
+                    </h3>
+                 </div>
+                 <div class="modal-body">
+                    <h5><B style="color:#333;font-size:14px;">Hostname:</B> {{inspect(i.2).0}} </h5>
+                    <h5><B style="color:#333;font-size:14px;">IPAddress:</B> {{inspect(i.2).1}}</h5>
+                    <h5><B style="color:#333;font-size:14px;">MACAddress:</B> {{inspect(i.2).2}}</h5>
+                    <h5><B style="color:#333;font-size:14px;">Gateway:</B> {{inspect(i.2).3}}</h5>
+                    <h5><B style="color:#333;font-size:14px;">Ports:</B> {{inspect(i.2).4}}</h5>
+                    <h5><B style="color:#333;font-size:14px;">Mounts:</B> {{inspect(i.2).5}}</h5>
+                    <h5><B style="color:#333;font-size:14px;">CMD:</B> {{inspect(i.2).6}}</h5>
+                    <h5><B style="color:#333;font-size:14px;">Entrypoint:</B> {{inspect(i.2).7}}</h5>
+                    <h5><B style="color:#333;font-size:14px;">Status:</B> {{i.4}}</h5>
+                </div><!-- /.modal-body -->
+              </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+      {% endfor %}
+      </tbody>
+    </table>
+    </div>
+    </div>
+    <script src={{ url_for('static', filename='js/jquery-2.0.3.js') }}></script>
+    <script src={{ url_for('static', filename='js/bootstrap.js') }}></script>
+  </body>
+</html>
