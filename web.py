@@ -74,7 +74,7 @@ def save_image(id, path):
     image_tar.write(image.data)
     image_tar.close()
 
-# Get the images info
+# Get the containers info
 def get_containers():
     containers = g.connect.containers(all=True)
     container_list = []
